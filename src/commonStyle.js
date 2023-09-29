@@ -2,6 +2,7 @@
 import { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
 import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom';
 
 export const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -27,7 +28,6 @@ export const GlobalStyle = createGlobalStyle`
     vertical-align: baseline;
   }
 
-  /* HTML5 display-role reset for older browsers */
   article, aside, details, figcaption, figure, 
   footer, header, hgroup, menu, nav, section {
     display: block;
@@ -57,8 +57,10 @@ export const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
   img {
+    display: block;
     vertical-align: top;
   }
+
 
   @font-face {
     font-family: 'SpoqaHanSansNeo-R';
@@ -67,7 +69,34 @@ export const GlobalStyle = createGlobalStyle`
     font-style: normal;
   }
 `
-//flex
+/**
+ * react-router-dom -> Link 밑줄 제거
+ */
+export const StyledLink = styled(Link)`
+  text-decoration: none;
+  &:focus, &:hover, &:visited, &:link, &:active {
+    text-decoration: none;
+  }
+`
+/**
+ * 미디어쿼리
+ */
+export const Size = {
+  wide: '1260px',
+  tablet: '768px',
+  mobile: '375px',
+}
+export const MediaQuery = {
+  wide: `@media (max-width: ${Size.wide})`,
+  tablet: `@media (max-width: ${Size.tablet})`,
+  mobile: `@media (max-width: ${Size.mobile})`,
+}
+
+/**
+ * mixin 선언부
+ */
+
+//flex ====================================
 export const FlexStyle = styled.div`
   display: flex;
   justify-content: center;
@@ -77,11 +106,12 @@ export const FlexStyle = styled.div`
 
 // ${props => props.type === 'col' ?
 // `flex-direction: column;` : `flex-direction: row;`}
-
 export const MAX_WIDTH = 1260;
 export const CommonLayOut = styled.div`
   width: 100%;
   margin: auto auto;
+  padding: 0 15px;
+  box-sizing: border-box;
   ${props => {
     switch (props.width) {
       case MAX_WIDTH:
@@ -92,7 +122,10 @@ export const CommonLayOut = styled.div`
   }}
 `
 
-//전역CSS 말줄임처리 ========================
+
+/**
+ * 전역CSS 말줄임처리
+ */
 export const elip1 = css`
   overflow: hidden;
   display: -webkit-box;
@@ -110,7 +143,3 @@ export const hidden = css`
   padding: 0;
   position: absolute;
 `;
-
-export const wrapper = css`
-  margin-top: 160px;
-`
