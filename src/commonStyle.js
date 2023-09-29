@@ -54,6 +54,7 @@ export const GlobalStyle = createGlobalStyle`
   button {
     background: none;
     border: none;
+    cursor: pointer;
   }
   img {
     vertical-align: top;
@@ -109,3 +110,7 @@ export const hidden = css`
   padding: 0;
   position: absolute;
 `;
+
+export const wrapper = css`
+  margin-top: 160px;
+`

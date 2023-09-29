@@ -1,4 +1,4 @@
-import { CommonLayOut, GlobalStyle, FlexStyle, elip1 } from "./commonStyle";
+import { CommonLayOut, GlobalStyle, FlexStyle, elip1, wrapper } from "./commonStyle";
 import styled from 'styled-components';
 import heart from './imgs/icon-heart.svg';
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ const GridContainer = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, auto);
   gap: 60px;
-  max-height: 100vh;
+  padding: 150px 0 150px;
 `;
 
 const GridItem = styled.div`
@@ -20,6 +20,7 @@ const GridItem = styled.div`
     border-radius: 10px;
     border: 1px solid #BDBDBD;
     box-sizing: border-box;
+    margin-bottom: 20px;
   }
   .itemName {
     display: flex;
@@ -62,6 +63,8 @@ const GridItem = styled.div`
 //http://35.76.53.28:8080/mall
 function App() {
   const [data, setData] = useState([]);
+  const [discount, setDiscount] = useState(0);
+  const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -88,6 +91,14 @@ function App() {
         <GridContainer>
           {
             data.map((item) => {
+
+              const price = item.price;
+              const priceResult = price.toLocaleString();
+              console.log(typeof priceResult, priceResult)
+              const discountNumber = item.price * (item.discountRate / 100);
+              const result = item.price - discountNumber;
+              const sale = result.toLocaleString();
+
               return (
                 <GridItem key={item.id}>
                   <img className="thumbnailImg" src={`https://test.api.weniv.co.kr/${item.thumbnailImg}`} alt={item.productName} />
@@ -96,9 +107,15 @@ function App() {
                     <button><img className="heartIcon" src={heart} alt="찜하기" /></button>
                   </div>
                   <div className="priceArea" name='direction'>
-                    <span className="sale">29,160</span>
-                    <span className="costPrice">{item.price}원</span>
-                    <span className="discountRate">{item.discountRate}%</span>
+                    <span className="sale">{sale}원</span>
+                    {
+                      item.discountRate !== 0 && (
+                        <>
+                        <span className="costPrice">{priceResult}원</span>
+                        <span className="discountRate">{item.discountRate}%</span>
+                        </>
+                      )
+                    }
                   </div>
                 </GridItem>
               )
