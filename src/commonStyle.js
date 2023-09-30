@@ -104,9 +104,6 @@ export const FlexStyle = styled.div`
   flex-direction: column;
 `
 
-// ${props => props.type === 'col' ?
-// `flex-direction: column;` : `flex-direction: row;`}
-export const MAX_WIDTH = 1260;
 export const CommonLayOut = styled.div`
   width: 100%;
   margin: auto auto;
@@ -114,17 +111,33 @@ export const CommonLayOut = styled.div`
   box-sizing: border-box;
   ${props => {
     switch (props.width) {
-      case MAX_WIDTH:
-        return `max-width: 1260px`;
+      case props.width:
+        return `max-width: ${props.width}px`;
       default:
         return '';
     }
   }}
 `
+/**
+ * img 공통 레이아웃 처리
+ */
+export const ThumbnailImg = styled.img`
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #bdbdbd;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  ${props => {
+    if(props.width === props.width) {
+      return `max-width: ${props.width}px`;
+    }
+    return '';
+  }}
+`;
 
 
 /**
- * 전역CSS 말줄임처리
+ * 말줄임처리
  */
 export const elip1 = css`
   overflow: hidden;
@@ -133,7 +146,10 @@ export const elip1 = css`
   -webkit-line-clamp: 1;
 `;
 
-export const hidden = css`
+/**
+ * 숨김처리
+ */
+export const hidden = styled.div`
   clip: rect(1px, 1px, 1px, 1px);
   clip-path: inset(50%);
   width: 1px;

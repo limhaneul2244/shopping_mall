@@ -5,6 +5,7 @@ import {
   elip1,
   MediaQuery,
   StyledLink,
+  ThumbnailImg,
 } from "./commonStyle";
 import styled from "styled-components";
 import heart from "./imgs/icon-heart.svg";
@@ -31,15 +32,6 @@ const GridContainer = styled.div`
 
 const GridItem = styled.div`
   ${FlexStyle}
-  max-width: 380px;
-
-  .thumbnailImg {
-    width: 100%;
-    border-radius: 10px;
-    border: 1px solid #bdbdbd;
-    box-sizing: border-box;
-    margin-bottom: 20px;
-  }
   .itemName {
     display: flex;
     justify-content: space-between;
@@ -119,8 +111,6 @@ const GridItem = styled.div`
 
 function App() {
   const [data, setData] = useState([]);
-  const [discount, setDiscount] = useState(0);
-  const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -147,7 +137,7 @@ function App() {
       <GlobalStyle />
       <CommonLayOut width={1260}>
         <GridContainer>
-          {data.map((item, index) => {
+          {data.map((item) => {
             const price = item.price;
             const priceResult = price.toLocaleString();
             const discountNumber = item.price * (item.discountRate / 100);
@@ -155,15 +145,20 @@ function App() {
             const sale = result.toLocaleString();
             return (
               <GridItem key={item.id}>
-                <StyledLink to={{pathname: `/ProductDetails/${item.id}`}} key={item.id}>
-                  <img
-                    className="thumbnailImg"
+                <StyledLink
+                  to={{ pathname: `/ProductDetails/${item.id}` }}
+                  key={item.id}
+                >
+                  <ThumbnailImg width={380}
                     src={`https://test.api.weniv.co.kr/${item.thumbnailImg}`}
                     alt={item.productName}
                   />
                 </StyledLink>
                 <div className="itemName">
-                  <StyledLink to={{pathname: `/ProductDetails/${item.id}`}} key={item.id}>
+                  <StyledLink
+                    to={{ pathname: `/ProductDetails/${item.id}` }}
+                    key={item.id}
+                  >
                     <span className="name">{item.productName}</span>
                   </StyledLink>
                   <button>
