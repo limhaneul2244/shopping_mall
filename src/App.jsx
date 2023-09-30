@@ -8,7 +8,8 @@ import {
   ThumbnailImg,
 } from "./commonStyle";
 import styled from "styled-components";
-import heart from "./imgs/icon-heart.svg";
+import heartOff from "./imgs/icon-heart-off.svg";
+import heartOn from "./imgs/icon-heart-on.svg";
 import { useCallback, useEffect, useState } from "react";
 
 const GridContainer = styled.div`
@@ -31,25 +32,28 @@ const GridContainer = styled.div`
 `;
 
 const GridItem = styled.div`
-  ${FlexStyle}
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+
   .itemName {
     display: flex;
     justify-content: space-between;
     width: 100%;
-
-    .name {
-      ${elip1}
-      color: #333;
-      font-size: 18px;
-      line-height: 22px;
-    }
-    .heartIcon {
-      display: inline-block;
-      width: 22px;
-      height: 22px;
-    }
+   
   }
-
+  .name {
+    ${elip1}
+    color: #333;
+    font-size: 18px;
+    line-height: 22px;
+  }
+  .heartIcon {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+  }
   .priceArea {
     span {
       margin-right: 10px;
@@ -137,49 +141,65 @@ function App() {
       <GlobalStyle />
       <CommonLayOut width={1260}>
         <GridContainer>
-          {data.map((item) => {
-            const price = item.price;
-            const priceResult = price.toLocaleString();
-            const discountNumber = item.price * (item.discountRate / 100);
-            const result = item.price - discountNumber;
-            const sale = result.toLocaleString();
-            return (
-              <GridItem key={item.id}>
-                <StyledLink
-                  to={{ pathname: `/ProductDetails/${item.id}` }}
-                  key={item.id}
-                >
-                  <ThumbnailImg width={380}
-                    src={`https://test.api.weniv.co.kr/${item.thumbnailImg}`}
-                    alt={item.productName}
-                  />
-                </StyledLink>
-                <div className="itemName">
-                  <StyledLink
-                    to={{ pathname: `/ProductDetails/${item.id}` }}
-                    key={item.id}
-                  >
-                    <span className="name">{item.productName}</span>
-                  </StyledLink>
-                  <button>
-                    <img className="heartIcon" src={heart} alt="찜하기" />
-                  </button>
-                </div>
-                <div className="priceArea" name="direction">
-                  <span className="sale">{sale}원</span>
-                  {item.discountRate !== 0 && (
-                    <>
-                      <span className="costPrice">{priceResult}원</span>
-                      <span className="discountRate">{item.discountRate}%</span>
-                    </>
-                  )}
-                </div>
-              </GridItem>
-            );
-          })}
+          {data.map((item) => (
+            <Item key={item.id} item={item} />
+          ))}
         </GridContainer>
       </CommonLayOut>
     </>
+  );
+}
+
+function Item({ item }) {
+  const [like, setLike] = useState(false);
+  const price = item.price;
+  const priceResult = price.toLocaleString();
+  const discountNumber = item.price * (item.discountRate / 100);
+  const result = item.price - discountNumber;
+  const sale = result.toLocaleString();
+
+  function handleLike() {
+    if (!like) {
+      setLike(true);
+    } else {
+      setLike(false);
+    }
+  }
+
+  return (
+    <GridItem>
+      <StyledLink to={{ pathname: `/ProductDetails/${item.id}` }} key={item.id}>
+        <ThumbnailImg
+          width={380}
+          src={`https://test.api.weniv.co.kr/${item.thumbnailImg}`}
+          alt={item.productName}
+        />
+      </StyledLink>
+      <div className="itemName">
+        <StyledLink
+          to={{ pathname: `/ProductDetails/${item.id}` }}
+          key={item.id}
+        >
+          <span className="name">{item.productName}</span>
+        </StyledLink>
+        <button onClick={() => handleLike(item)}>
+          <img
+            className="heartIcon"
+            src={like ? heartOn : heartOff}
+            alt="찜하기"
+          />
+        </button>
+      </div>
+      <div className="priceArea" name="direction">
+        <span className="sale">{sale}원</span>
+        {item.discountRate !== 0 && (
+          <>
+            <span className="costPrice">{priceResult}원</span>
+            <span className="discountRate">{item.discountRate}%</span>
+          </>
+        )}
+      </div>
+    </GridItem>
   );
 }
 

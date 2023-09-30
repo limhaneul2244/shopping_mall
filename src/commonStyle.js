@@ -59,6 +59,7 @@ export const GlobalStyle = createGlobalStyle`
   img {
     display: block;
     vertical-align: top;
+    width: 100%;
   }
 
 
@@ -149,7 +150,7 @@ export const elip1 = css`
 /**
  * 숨김처리
  */
-export const hidden = styled.div`
+export const hidden = css`
   clip: rect(1px, 1px, 1px, 1px);
   clip-path: inset(50%);
   width: 1px;

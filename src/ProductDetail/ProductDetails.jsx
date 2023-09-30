@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { CommonLayOut, GlobalStyle, ThumbnailImg } from "../commonStyle";
+import { CommonLayOut, GlobalStyle, MediaQuery, ThumbnailImg, elip1 } from "../commonStyle";
 import styled from "styled-components";
-// import minusIcon from './imgs/icon-minus.svg';
+import Loading from "../components/Loading/Loading";
+import shoppingCart from "../imgs/icon-shopping-cart.svg";
+import heart from "../imgs/icon-heart-off.svg";
 
 const ProductInfo = styled.div`
   display: flex;
+  justify-content: space-evenly;
+
+  ${MediaQuery.tablet} {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const ProductDetail = styled.div`
-  margin-left: 30px;
   h1 {
+    ${elip1}
     margin-bottom: 10px;
     font-size: 24px;
   }
@@ -62,9 +70,39 @@ const ProductCount = styled.div`
   }
 `;
 
+const PriceInfo = styled.div`
+display: flex;
+align-items: center;
+  >span {
+    font-size: 18px;
+    &:nth-of-type(1) {
+      font-size: 18px;
+      margin-right: auto;
+      color: #333;
+    }
+    &:nth-of-type(2) {
+      color: #828282;
+    }
+    &:nth-of-type(2)::after {
+      content: '';
+      display: inline-flex;
+      width: 1px;
+      height: 23px;
+      background-color: #C4C4C4;
+      margin: 10px;
+    }
+    &:nth-of-type(3) {
+      font-size: 36px;
+    }
+  }
+  .highlight {
+    color: #eb5757;
+  }
+`;
+
 export default function ProductDetails() {
   const { id } = useParams();
-  const [detailData, setDetailData] = useState({});
+  const [detailData, setDetailData] = useState(null);
   console.log(id);
 
   useEffect(() => {
@@ -86,8 +124,10 @@ export default function ProductDetails() {
     }
   };
 
-  const detailInfoImageArray = detailData.detailInfoImage;
-  console.log("detailInfoImageArray", detailInfoImageArray);
+  //로딩처리
+  if (!detailData) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -117,16 +157,24 @@ export default function ProductDetails() {
               </div>
             </ProductCount>
 
-            <div>
+            <PriceInfo>
               <span>총 상품 금액</span>
-              <span>총 수량 1개</span>
-              <span>13500원</span>
-            </div>
+              <span>
+                총 수량 <span className="highlight">1</span>개
+              </span>
+              <span><span className="highlight">13500</span>원</span>
+            </PriceInfo>
 
-            <div>
-              <button>바로 구매</button>
-              <button></button>
-              <button></button>
+            <div className="">
+              <button className="purchase">바로 구매</button>
+              {/* <PurchaseButton/> */}
+              <button className="cart">
+                <img src={shoppingCart} alt="" />
+              </button>
+              {/* <ShoppingButton/> */}
+              <button className="like">
+                <img src={heart} alt="" />
+              </button>
             </div>
           </ProductDetail>
         </ProductInfo>
@@ -134,18 +182,18 @@ export default function ProductDetails() {
         <table>
           <tbody>
             <tr>
-              <td>상품 번호</td>
-              <td>20220302</td>
+              <td>게시일</td>
+              <td>{detailData.pubDate}</td>
             </tr>
             <tr>
               <td>재고 수량</td>
-              <td>230개</td>
+              <td>{detailData.stockCount}개</td>
             </tr>
           </tbody>
         </table>
 
         <div>
-          {detailInfoImageArray.map((img) => {
+          {detailData.detailInfoImage.map((img) => {
             return (
               <img
                 src={`https://test.api.weniv.co.kr/${img}`}
