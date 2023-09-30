@@ -6,14 +6,25 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ProductDetails from './ProductDetail/ProductDetails';
 import Cart from './Cart&Payment/Cart';
 
+// import rootReducer from './modules';
+// import { createStore } from 'redux';
+// import { Provider } from 'react-redux';
+
+
+// const store = createStore(rootReducer)
+// console.log(store.getState())
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path='/' element={<App />} />
-      <Route path='/mall' element={<Main />} />
-      <Route path='/ProductDetails/:id' element={<ProductDetails />} />
-      <Route path='/Cart' element={<Cart />} />
-    </Routes>
-  </BrowserRouter>
+  // <Provider store={store}>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<App />} />
+        <Route path='/mall' element={<Main />} />
+        <Route path='/ProductDetails/:id' element={<ProductDetails />} />
+        <Route path='/Cart' element={<Cart />} />
+      </Routes>
+    </BrowserRouter>
+  // </Provider>
 );

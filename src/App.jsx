@@ -9,8 +9,6 @@ import {
 import styled from "styled-components";
 import heart from "./imgs/icon-heart.svg";
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { ProductProvider } from "./ProductProvider";
 
 const GridContainer = styled.div`
   display: grid;
@@ -118,7 +116,7 @@ const GridItem = styled.div`
     }
   }
 `;
-//http://35.76.53.28:8080/mall
+
 function App() {
   const [data, setData] = useState([]);
   const [discount, setDiscount] = useState(0);
@@ -152,13 +150,12 @@ function App() {
           {data.map((item, index) => {
             const price = item.price;
             const priceResult = price.toLocaleString();
-            console.log(typeof priceResult, priceResult);
             const discountNumber = item.price * (item.discountRate / 100);
             const result = item.price - discountNumber;
             const sale = result.toLocaleString();
             return (
               <GridItem key={item.id}>
-                <StyledLink to={`/ProductDetails/${item.id}`} key={item.id}>
+                <StyledLink to={{pathname: `/ProductDetails/${item.id}`}} key={item.id}>
                   <img
                     className="thumbnailImg"
                     src={`https://test.api.weniv.co.kr/${item.thumbnailImg}`}
@@ -166,7 +163,7 @@ function App() {
                   />
                 </StyledLink>
                 <div className="itemName">
-                  <StyledLink to={`ProductDetails/${item.id}`} key={item.id}>
+                  <StyledLink to={{pathname: `/ProductDetails/${item.id}`}} key={item.id}>
                     <span className="name">{item.productName}</span>
                   </StyledLink>
                   <button>
