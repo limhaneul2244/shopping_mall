@@ -84,11 +84,13 @@ export const StyledLink = styled(Link)`
  */
 export const Size = {
   wide: '1260px',
+  wideDetaild: '1000px',
   tablet: '768px',
   mobile: '375px',
 }
 export const MediaQuery = {
   wide: `@media (max-width: ${Size.wide})`,
+  wideDetailed: `@media (max-width: ${Size.wideDetaild})`,
   tablet: `@media (max-width: ${Size.tablet})`,
   mobile: `@media (max-width: ${Size.mobile})`,
 }
@@ -96,14 +98,6 @@ export const MediaQuery = {
 /**
  * mixin 선언부
  */
-
-//flex ====================================
-export const FlexStyle = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-`
 
 export const CommonLayOut = styled.div`
   width: 100%;
