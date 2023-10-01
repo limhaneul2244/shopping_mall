@@ -1,10 +1,18 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { CommonLayOut, GlobalStyle, MediaQuery, ThumbnailImg, elip1 } from "../commonStyle";
+import {
+  CommonLayOut,
+  GlobalStyle,
+  MediaQuery,
+  ThumbnailImg,
+  elip1,
+} from "../commonStyle";
 import styled from "styled-components";
 import Loading from "../components/Loading/Loading";
 import shoppingCart from "../imgs/icon-shopping-cart.svg";
 import heart from "../imgs/icon-heart-off.svg";
+import PurchaseButton from "../components/PurchaseButton/PurchaseButton";
+import BaseButton from "./../components/BaseButton/BaseButton";
 
 const ProductInfo = styled.div`
   display: flex;
@@ -71,9 +79,9 @@ const ProductCount = styled.div`
 `;
 
 const PriceInfo = styled.div`
-display: flex;
-align-items: center;
-  >span {
+  display: flex;
+  align-items: center;
+  > span {
     font-size: 18px;
     &:nth-of-type(1) {
       font-size: 18px;
@@ -84,11 +92,11 @@ align-items: center;
       color: #828282;
     }
     &:nth-of-type(2)::after {
-      content: '';
+      content: "";
       display: inline-flex;
       width: 1px;
       height: 23px;
-      background-color: #C4C4C4;
+      background-color: #c4c4c4;
       margin: 10px;
     }
     &:nth-of-type(3) {
@@ -100,9 +108,40 @@ align-items: center;
   }
 `;
 
+const ProductAction = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+`;
+
+const ProductInformation = styled.div`
+  .productInforWrap {
+    display: flex;
+    align-items: center;
+    border-top: 2px solid #e0e0e0;
+    border-bottom: 2px solid #e0e0e0;
+    height: 44px;
+
+    .inforItem {
+      display: flex;
+      align-items: center;
+      padding-left: 12px;
+      max-width: 150px;
+      height: 100%;
+      background-color: #f2f2f2;
+    }
+    span {
+      padding-left: 12px;
+      width: 100%;
+    }
+  }
+`;
+
 export default function ProductDetails() {
   const { id } = useParams();
   const [detailData, setDetailData] = useState(null);
+  const [totalNumber, setTotlaNumber] = useState(1);
   console.log(id);
 
   useEffect(() => {
@@ -124,6 +163,13 @@ export default function ProductDetails() {
     }
   };
 
+  const handleCountUp = useCallback(() => {
+    setTotlaNumber(totalNumber + 1);
+  }, [totalNumber]);
+
+  const handleCountDown = useCallback(() => {
+    setTotlaNumber(totalNumber - 1);
+  }, [totalNumber]);
   //로딩처리
   if (!detailData) {
     return <Loading />;
@@ -148,11 +194,17 @@ export default function ProductDetails() {
               <div className="delivery">택배배송 / 무료배송</div>
               <div className="countWrapper">
                 <div className="countInner">
-                  <button className="countBtn" type="minus">
+                  <button
+                    className="countBtn"
+                    type="minus"
+                    onClick={handleCountDown}
+                  >
                     -
                   </button>
-                  <div className="num">1</div>
-                  <button className="countBtn">+</button>
+                  <div className="num">{totalNumber}</div>
+                  <button className="countBtn" onClick={handleCountUp}>
+                    +
+                  </button>
                 </div>
               </div>
             </ProductCount>
@@ -162,40 +214,34 @@ export default function ProductDetails() {
               <span>
                 총 수량 <span className="highlight">1</span>개
               </span>
-              <span><span className="highlight">13500</span>원</span>
+              <span>
+                <span className="highlight">{detailData.price}</span>원
+              </span>
             </PriceInfo>
 
-            <div className="">
-              <button className="purchase">바로 구매</button>
-              {/* <PurchaseButton/> */}
-              <button className="cart">
-                <img src={shoppingCart} alt="" />
-              </button>
-              {/* <ShoppingButton/> */}
-              <button className="like">
-                <img src={heart} alt="" />
-              </button>
-            </div>
+            <ProductAction>
+              <PurchaseButton />
+              <BaseButton icon={shoppingCart} alt={"cart"} />
+              <BaseButton icon={heart} alt={"like"} />
+            </ProductAction>
           </ProductDetail>
         </ProductInfo>
 
-        <table>
-          <tbody>
-            <tr>
-              <td>게시일</td>
-              <td>{detailData.pubDate}</td>
-            </tr>
-            <tr>
-              <td>재고 수량</td>
-              <td>{detailData.stockCount}개</td>
-            </tr>
-          </tbody>
-        </table>
+        <ProductInformation>
+          <p>상품 정보</p>
+          <div className="productInforWrap">
+            <span className="inforItem">게시일</span>
+            <span>{detailData.pubDate}</span>
+            <span className="inforItem">재고 수량</span>
+            <span>{detailData.stockCount}개</span>
+          </div>
+        </ProductInformation>
 
         <div>
-          {detailData.detailInfoImage.map((img) => {
+          {detailData.detailInfoImage.map((img, index) => {
             return (
               <img
+              key={index}
                 src={`https://test.api.weniv.co.kr/${img}`}
                 alt={detailData.productName}
               />
