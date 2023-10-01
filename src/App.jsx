@@ -1,16 +1,11 @@
 import {
   CommonLayOut,
   GlobalStyle,
-  FlexStyle,
-  elip1,
   MediaQuery,
-  StyledLink,
-  ThumbnailImg,
 } from "./commonStyle";
 import styled from "styled-components";
-import heartOff from "./imgs/icon-heart-off.svg";
-import heartOn from "./imgs/icon-heart-on.svg";
 import { useCallback, useEffect, useState } from "react";
+import ProductItem from "./components/ProductsItem/ProductsItem";
 
 const GridContainer = styled.div`
   display: grid;
@@ -28,88 +23,6 @@ const GridContainer = styled.div`
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
     padding: 38px 0 38px;
-  }
-`;
-
-const GridItem = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: start;
-  flex-direction: column;
-
-  .itemName {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-   
-  }
-  .name {
-    ${elip1}
-    color: #333;
-    font-size: 18px;
-    line-height: 22px;
-  }
-  .heartIcon {
-    display: inline-block;
-    width: 22px;
-    height: 22px;
-  }
-  .priceArea {
-    span {
-      margin-right: 10px;
-
-      &:nth-of-type(1) {
-        color: #333;
-        font-size: 24px;
-        font-weight: 700;
-      }
-      &:nth-of-type(2) {
-        color: #828282;
-        text-decoration: line-through;
-      }
-      &:nth-of-type(3) {
-        color: #6327fe;
-        font-weight: 700;
-      }
-    }
-  }
-
-  ${MediaQuery.tablet} {
-    .itemName {
-      .name {
-        font-size: 16px;
-      }
-    }
-    .priceArea {
-      span {
-        &:nth-of-type(1) {
-          font-size: 18px;
-        }
-        &:nth-of-type(2) {
-          font-size: 15px;
-        }
-        &:nth-of-type(3) {
-          font-size: 13px;
-        }
-      }
-    }
-  }
-
-  ${MediaQuery.tablet} {
-    .itemName {
-      .name {
-        font-size: 13px;
-      }
-    }
-    .priceArea {
-      span {
-        &:nth-of-type(1),
-        &:nth-of-type(2),
-        &:nth-of-type(3) {
-          font-size: 13px;
-        }
-      }
-    }
   }
 `;
 
@@ -142,65 +55,11 @@ function App() {
       <CommonLayOut width={1260}>
         <GridContainer>
           {data.map((item) => (
-            <Item key={item.id} item={item} />
+            <ProductItem key={item.id} item={item} />
           ))}
         </GridContainer>
       </CommonLayOut>
     </>
   );
 }
-
-function Item({ item }) {
-  const [like, setLike] = useState(false);
-  const price = item.price;
-  const priceResult = price.toLocaleString();
-  const discountNumber = item.price * (item.discountRate / 100);
-  const result = item.price - discountNumber;
-  const sale = result.toLocaleString();
-
-  function handleLike() {
-    if (!like) {
-      setLike(true);
-    } else {
-      setLike(false);
-    }
-  }
-
-  return (
-    <GridItem>
-      <StyledLink to={{ pathname: `/ProductDetails/${item.id}` }} key={item.id}>
-        <ThumbnailImg
-          width={380}
-          src={`https://test.api.weniv.co.kr/${item.thumbnailImg}`}
-          alt={item.productName}
-        />
-      </StyledLink>
-      <div className="itemName">
-        <StyledLink
-          to={{ pathname: `/ProductDetails/${item.id}` }}
-          key={item.id}
-        >
-          <span className="name">{item.productName}</span>
-        </StyledLink>
-        <button onClick={() => handleLike(item)}>
-          <img
-            className="heartIcon"
-            src={like ? heartOn : heartOff}
-            alt="찜하기"
-          />
-        </button>
-      </div>
-      <div className="priceArea" name="direction">
-        <span className="sale">{sale}원</span>
-        {item.discountRate !== 0 && (
-          <>
-            <span className="costPrice">{priceResult}원</span>
-            <span className="discountRate">{item.discountRate}%</span>
-          </>
-        )}
-      </div>
-    </GridItem>
-  );
-}
-
 export default App;
