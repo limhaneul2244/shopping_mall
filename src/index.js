@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import Main from './Main';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ProductDetails from './ProductDetail/ProductDetails';
+import ProductDetails from './ProductDetails/ProductDetails';
 import Cart from './Cart&Payment/Cart';
 
 // import rootReducer from './modules';

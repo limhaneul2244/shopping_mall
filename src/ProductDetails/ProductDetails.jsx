@@ -12,7 +12,7 @@ import Loading from "../components/Loading/Loading";
 import shoppingCart from "../imgs/icon-shopping-cart.svg";
 import heart from "../imgs/icon-heart-off.svg";
 import PurchaseButton from "../components/PurchaseButton/PurchaseButton";
-import BaseButton from "./../components/BaseButton/BaseButton";
+import BaseButton from "../components/BaseButton/BaseButton";
 
 const ProductInfo = styled.div`
   display: flex;
@@ -112,7 +112,6 @@ const ProductAction = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-
 `;
 
 const ProductInformation = styled.div`
@@ -138,10 +137,63 @@ const ProductInformation = styled.div`
   }
 `;
 
+//셀렉트 박스
+const CustomSelect = styled.div`
+  border: 1px solid #c4c4c4;
+  width: 440px;
+  height: 40px;
+  background: #fff;
+  text-align: left;
+  padding: 0 1em;
+  position: relative;
+  border-radius: 10px;
+  h3 {
+    color: #828282;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-size: 14px;
+  }
+  .list {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #bdbdbd;
+    padding: 4px;
+    box-shadow: 4px 4px 14px rgba(0, 0, 0, 0.15);
+  }
+  .list li {
+    height: 40px;
+  }
+
+  .list button {
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .list li button:hover,
+  .list li button:focus {
+    background: #f8f5ff;
+  }
+`;
+
+/**
+ *
+ * @returns 아이템의 세부 정보
+ */
 export default function ProductDetails() {
   const { id } = useParams();
   const [detailData, setDetailData] = useState(null);
   const [totalNumber, setTotlaNumber] = useState(1);
+  const [showSelBox, setShowSelBox] = useState(false);
   console.log(id);
 
   useEffect(() => {
@@ -163,13 +215,40 @@ export default function ProductDetails() {
     }
   };
 
+  //최종 가격
+  let price = detailData?.price * totalNumber;
+  const finalPrice = price.toLocaleString();
+  console.log("price", finalPrice);
+
+  //재고수량
+  let stockCount = detailData?.stockCount;
+
+  //옵션유무
+  const option = detailData?.option;
+  console.log(option);
+
   const handleCountUp = useCallback(() => {
+    if (totalNumber === stockCount) {
+      alert("주문가능한 최대 수량입니다.🤔");
+      setTotlaNumber(stockCount);
+      return;
+    }
     setTotlaNumber(totalNumber + 1);
-  }, [totalNumber]);
+  }, [totalNumber, stockCount]);
 
   const handleCountDown = useCallback(() => {
+    if (totalNumber <= 1) {
+      alert("최소 주문 수량입니다.👋");
+      setTotlaNumber(1);
+      return;
+    }
     setTotlaNumber(totalNumber - 1);
   }, [totalNumber]);
+
+  const handleOption = useCallback(() => {
+    setShowSelBox(true);
+  }, []);
+
   //로딩처리
   if (!detailData) {
     return <Loading />;
@@ -190,34 +269,60 @@ export default function ProductDetails() {
             <h2>
               <span className="price">{detailData.price}</span>원
             </h2>
-            <ProductCount>
-              <div className="delivery">택배배송 / 무료배송</div>
-              <div className="countWrapper">
-                <div className="countInner">
-                  <button
-                    className="countBtn"
-                    type="minus"
-                    onClick={handleCountDown}
-                  >
-                    -
-                  </button>
-                  <div className="num">{totalNumber}</div>
-                  <button className="countBtn" onClick={handleCountUp}>
-                    +
-                  </button>
-                </div>
-              </div>
-            </ProductCount>
+            {stockCount === 0 ? null : (
+              <>
+                <ProductCount>
+                  <div className="delivery">택배배송 / 무료배송</div>
 
-            <PriceInfo>
-              <span>총 상품 금액</span>
-              <span>
-                총 수량 <span className="highlight">1</span>개
-              </span>
-              <span>
-                <span className="highlight">{detailData.price}</span>원
-              </span>
-            </PriceInfo>
+                  {option.length > 0 && (
+                    <CustomSelect>
+                      <h3>옵션을 선택하세요</h3>
+                      <ul class="list">
+                        {option.map((optionList) => {
+                          return (
+                            <li key={optionList.id}>
+                              <button
+                                type="button"
+                                class="btnSelect"
+                                onClick={handleOption}
+                              >
+                                <span>{optionList.optionName}</span>
+                                <span>{(optionList.additionalFee ? ` (+${optionList.additionalFee}원)` : null)}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </CustomSelect>
+                  )}
+                  <div className="countWrapper">
+                    <div className="countInner">
+                      <button
+                        className="countBtn"
+                        type="minus"
+                        onClick={handleCountDown}
+                      >
+                        -
+                      </button>
+                      <div className="num">{totalNumber}</div>
+                      <button className="countBtn" onClick={handleCountUp}>
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </ProductCount>
+
+                <PriceInfo>
+                  <span>총 상품 금액</span>
+                  <span>
+                    총 수량 <span className="highlight">{totalNumber}</span>개
+                  </span>
+                  <span>
+                    <span className="highlight">{finalPrice}</span>원
+                  </span>
+                </PriceInfo>
+              </>
+            )}
 
             <ProductAction>
               <PurchaseButton />
@@ -233,7 +338,7 @@ export default function ProductDetails() {
             <span className="inforItem">게시일</span>
             <span>{detailData.pubDate}</span>
             <span className="inforItem">재고 수량</span>
-            <span>{detailData.stockCount}개</span>
+            <span>{stockCount && stockCount - totalNumber}개</span>
           </div>
         </ProductInformation>
 
@@ -241,7 +346,7 @@ export default function ProductDetails() {
           {detailData.detailInfoImage.map((img, index) => {
             return (
               <img
-              key={index}
+                key={index}
                 src={`https://test.api.weniv.co.kr/${img}`}
                 alt={detailData.productName}
               />
