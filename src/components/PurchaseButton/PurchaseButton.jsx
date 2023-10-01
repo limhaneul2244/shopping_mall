@@ -1,10 +1,10 @@
 import React from "react";
 import { styled } from "styled-components";
+import { MediaQuery } from "../../commonStyle";
 
 const Purchase = styled.button`
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-shrink: 0;
   color: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
@@ -12,6 +12,10 @@ const Purchase = styled.button`
   padding: 19px 118px;
   font-size: 18px;
   font-family: "SpoqaHanSansNeo-R";
+
+  ${MediaQuery.wideDetailed} {
+    padding: 19px 60px;
+  }
 `;
 
 /**
