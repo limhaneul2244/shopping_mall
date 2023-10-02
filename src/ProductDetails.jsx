@@ -15,8 +15,7 @@ import PurchaseButton from "./components/PurchaseButton/PurchaseButton";
 import BaseButton from "./components/BaseButton/BaseButton";
 import SelectBox from "./components/SelectBox/SelectBox";
 import ProductCountButton from "./components/ProductCountButton/ProductCountButton";
-import { useDispatch, useSelector } from "react-redux";
-import { setOptionName } from "./modules/productOptions";
+import { useSelector } from "react-redux";
 
 const ProductInfo = styled.div`
   display: flex;
@@ -135,7 +134,8 @@ export default function ProductDetails() {
   const [finalPrice, setFinalPrice] = useState("");
   console.log(id);
 
-  const selectOption = useSelector(state => state.option.optionName)
+  const selectOption = useSelector((state) => state.option.optionName);
+  console.log('selectOption', selectOption)
 
   useEffect(() => {
     productDetailData();
@@ -201,25 +201,26 @@ export default function ProductDetails() {
                 <ProductCount>
                   <div className="delivery">택배배송 / 무료배송</div>
                   <div className="countWrapper">
-                    <SelectBox detailData={detailData} />
-
-                    <div>
-                      <div>{selectOption}</div>
-                      <div>
-                        <ProductCountButton
-                          totalNumber={totalNumber}
-                          handleCountUp={handleCountUp}
-                          handleCountDown={handleCountDown}
-                        />
-                      </div>
-                      <div>{finalPrice}원</div>
-                    </div>
-
-                    <ProductCountButton
-                      totalNumber={totalNumber}
-                      handleCountUp={handleCountUp}
-                      handleCountDown={handleCountDown}
-                    />
+                    {detailData.option.length > 0 ?(
+                    <>
+                      <SelectBox detailDataOption={detailData.option} />
+                      {selectOption && <div>
+                        <div>{selectOption}</div>
+                        <div>
+                          <ProductCountButton
+                            totalNumber={totalNumber}
+                            handleCountUp={handleCountUp}
+                            handleCountDown={handleCountDown}
+                          />
+                        </div>
+                        <div>{finalPrice}원</div>
+                      </div>}
+                    </>
+                    ) : <ProductCountButton
+                    totalNumber={totalNumber}
+                    handleCountUp={handleCountUp}
+                    handleCountDown={handleCountDown}
+                  />}
                   </div>
                 </ProductCount>
 
