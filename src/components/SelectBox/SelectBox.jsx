@@ -55,7 +55,8 @@ const CustomSelect = styled.div`
  * @param detailData 옵션을 선택하세요(옵션 선택 박스)
  * @returns 셀렉트 박스
  */
-export default function SelectBox({ detailData }) {
+export default function SelectBox({ detailDataOption }) {
+  console.log("detailData", detailDataOption);
   const [showSelBox, setShowSelBox] = useState(false);
 
   const handleOption = useCallback(() => {
@@ -68,18 +69,16 @@ export default function SelectBox({ detailData }) {
 
   return (
     <>
-      {detailData.option.length > 0 && (
-        <CustomSelect onClick={handleOption}>
-          <h3>옵션을 선택하세요</h3>
-          {showSelBox && (
-            <ul className="list">
-              {detailData.option.map((option) => {
-                return <SelectBoxChildren key={option.id} option={option} />;
-              })}
-            </ul>
-          )}
-        </CustomSelect>
-      )}
+      <CustomSelect onClick={handleOption}>
+        <h3>옵션을 선택하세요</h3>
+        {showSelBox && (
+          <ul className="list">
+            {detailDataOption.map((option) => {
+              return <SelectBoxChildren key={option.id} option={option} />;
+            })}
+          </ul>
+        )}
+      </CustomSelect>
     </>
   );
 }
