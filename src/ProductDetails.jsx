@@ -11,6 +11,7 @@ import styled from "styled-components";
 import Loading from "./components/Loading/Loading";
 import shoppingCart from "./imgs/icon-shopping-cart.svg";
 import heart from "./imgs/icon-heart-off.svg";
+import closeBtn from "./imgs/icon-close.svg";
 import PurchaseButton from "./components/PurchaseButton/PurchaseButton";
 import BaseButton from "./components/BaseButton/BaseButton";
 import SelectBox from "./components/SelectBox/SelectBox";
@@ -19,16 +20,18 @@ import { useSelector } from "react-redux";
 
 const ProductInfo = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   padding: 60px 0;
 
   ${MediaQuery.tablet} {
     flex-direction: column;
     align-items: center;
+    padding: 30px 0;
   }
 `;
 
 const ProductDetail = styled.div`
+  margin-left: 20px;
   h1 {
     ${elip1}
     margin-bottom: 10px;
@@ -45,6 +48,9 @@ const ProductDetail = styled.div`
   h2 span {
     font-size: 24px;
     font-weight: 700;
+  }
+  ${MediaQuery.wide} {
+    margin-left: 0;
   }
 `;
 
@@ -123,6 +129,28 @@ const ProductInformation = styled.div`
   }
 `;
 
+const OptionSelectedWrapper = styled.div`
+  width: 100%;
+  border-radius: 5px;
+  background: #f3f0fb;
+  color: #333;
+  padding: 14px;
+  box-sizing: border-box;
+  margin: 16px 0;
+  .optionValue {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .finalPrice {
+    span {
+      font-size: 24px;
+      font-weight: 700;
+    }
+  }
+`;
+
 /**
  *
  * @returns 아이템의 세부 정보
@@ -132,14 +160,25 @@ export default function ProductDetails() {
   const [detailData, setDetailData] = useState(null);
   const [totalNumber, setTotlaNumber] = useState(1);
   const [finalPrice, setFinalPrice] = useState("");
+  const [close, setClose] = useState(true);
   console.log(id);
 
   const selectOption = useSelector((state) => state.option.optionName);
-  console.log('selectOption', selectOption)
+  console.log("selectOption", selectOption);
 
   useEffect(() => {
     productDetailData();
   }, []);
+
+  //totalNumber값이 바뀔경우
+  useEffect(() => {
+    if (detailData) {
+      console.log(detailData);
+      let price = detailData.price * totalNumber;
+      console.log("price", price);
+      setFinalPrice(price.toLocaleString());
+    }
+  }, [totalNumber, detailData]);
 
   const productDetailData = async () => {
     try {
@@ -150,9 +189,6 @@ export default function ProductDetails() {
       const detailData = await res.json();
       console.log(detailData);
       setDetailData(detailData);
-
-      let price = detailData.price * totalNumber;
-      setFinalPrice(price.toLocaleString());
       return detailData;
     } catch (error) {
       console.error("데이터를 불러오는 도중 에러가 발생했어요", error);
@@ -176,6 +212,15 @@ export default function ProductDetails() {
     setTotlaNumber(totalNumber - 1);
   }, [totalNumber]);
 
+  const handleClose = useCallback(()=> {
+    if(selectOption !== null) {
+      console.log('selectOption닫기🙌', selectOption)
+      setClose(false);
+      return;
+    }
+    // setClose(true);
+  }, [close, selectOption]);
+
   //로딩처리
   if (!detailData) {
     return <Loading />;
@@ -194,33 +239,45 @@ export default function ProductDetails() {
           <ProductDetail>
             <h1>{detailData.productName}</h1>
             <h2>
-              <span className="price">{finalPrice}</span>원
+              <span className="price">{detailData.price.toLocaleString()}</span>
+              원
             </h2>
             {detailData.stockCount === 0 ? null : (
               <>
                 <ProductCount>
                   <div className="delivery">택배배송 / 무료배송</div>
                   <div className="countWrapper">
-                    {detailData.option.length > 0 ?(
-                    <>
-                      <SelectBox detailDataOption={detailData.option} />
-                      {selectOption && <div>
-                        <div>{selectOption}</div>
-                        <div>
-                          <ProductCountButton
-                            totalNumber={totalNumber}
-                            handleCountUp={handleCountUp}
-                            handleCountDown={handleCountDown}
-                          />
-                        </div>
-                        <div>{finalPrice}원</div>
-                      </div>}
-                    </>
-                    ) : <ProductCountButton
-                    totalNumber={totalNumber}
-                    handleCountUp={handleCountUp}
-                    handleCountDown={handleCountDown}
-                  />}
+                    {detailData.option.length > 0 ? (
+                      <>
+                        <SelectBox detailDataOption={detailData.option} />
+                        {close && selectOption && (
+                          <OptionSelectedWrapper>
+                            <div>{selectOption}</div>
+                            <button onClick={handleClose}>
+                              <img src={closeBtn} alt="닫기" />
+                            </button>
+                            <div className="optionValue">
+                              <div>
+                                <ProductCountButton
+                                  totalNumber={totalNumber}
+                                  handleCountUp={handleCountUp}
+                                  handleCountDown={handleCountDown}
+                                />
+                              </div>
+                              <span className="finalPrice">
+                                <span>{finalPrice}</span>원
+                              </span>
+                            </div>
+                          </OptionSelectedWrapper>
+                        )}
+                      </>
+                    ) : (
+                      <ProductCountButton
+                        totalNumber={totalNumber}
+                        handleCountUp={handleCountUp}
+                        handleCountDown={handleCountDown}
+                      />
+                    )}
                   </div>
                 </ProductCount>
 
