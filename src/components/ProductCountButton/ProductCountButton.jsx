@@ -7,7 +7,7 @@ const ProductCountInner = styled.div`
   align-items: center;
   border-radius: 5px;
   box-sizing: border-box;
-
+  background-color: #fff;
   .countBtn {
     text-align: center;
     font-size: 30px;

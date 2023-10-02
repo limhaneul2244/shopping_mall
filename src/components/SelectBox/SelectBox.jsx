@@ -52,7 +52,7 @@ const CustomSelect = styled.div`
 
 /**
  *
- * @param detailData 옵션을 선택하세요(옵션 선택 박스)
+ * @param detailDataOption detailData.option 옵션 선택
  * @returns 셀렉트 박스
  */
 export default function SelectBox({ detailDataOption }) {
