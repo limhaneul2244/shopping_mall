@@ -132,18 +132,10 @@ export default function ProductDetails() {
   const { id } = useParams();
   const [detailData, setDetailData] = useState(null);
   const [totalNumber, setTotlaNumber] = useState(1);
-  // const [showSelBox, setShowSelBox] = useState(false);
   const [finalPrice, setFinalPrice] = useState("");
-  // const [optionName, setOptionName] = useState("");
   console.log(id);
 
-  //디스패치 생성
-  const dispatch = useDispatch();
-  const test = useSelector(state => { 
-    console.log(state.option.optionName)
-    return state.option.optionName;
-  })
-  // const productOptionName = useSelector(state => state.option.optionName);
+  const selectOption = useSelector(state => state.option.optionName)
 
   useEffect(() => {
     productDetailData();
@@ -212,7 +204,7 @@ export default function ProductDetails() {
                     <SelectBox detailData={detailData} />
 
                     <div>
-                      <div>{test}</div>
+                      <div>{selectOption}</div>
                       <div>
                         <ProductCountButton
                           totalNumber={totalNumber}

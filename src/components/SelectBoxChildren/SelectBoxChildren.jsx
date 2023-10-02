@@ -3,9 +3,7 @@ import { useDispatch } from "react-redux";
 import { setOptionName } from "../../modules/productOptions";
 
 export default function SelectBoxChildren({ option }) {
-  // const [optionName, setOptionName] = useState(optionList.optionName);
   const dispatch = useDispatch();
-  console.log(dispatch)
   //클릭을 통해 옵션이름 변경됨
   const handleOptionBtn = useCallback(() => {
     dispatch(setOptionName(option.optionName));

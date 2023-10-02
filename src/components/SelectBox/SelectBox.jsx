@@ -57,7 +57,7 @@ const CustomSelect = styled.div`
  */
 export default function SelectBox({ detailData }) {
   const [showSelBox, setShowSelBox] = useState(false);
-  
+
   const handleOption = useCallback(() => {
     if (!showSelBox) {
       setShowSelBox(true);
