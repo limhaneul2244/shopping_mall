@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { styled } from 'styled-components';
+import { styled } from "styled-components";
 import SelectBoxChildren from "../SelectBoxChildren/SelectBoxChildren";
 
 //셀렉트 박스
@@ -52,11 +52,12 @@ const CustomSelect = styled.div`
 
 /**
  *
- * @param detailData 상품 옵션 선택
+ * @param detailData 옵션을 선택하세요(옵션 선택 박스)
  * @returns 셀렉트 박스
  */
 export default function SelectBox({ detailData }) {
   const [showSelBox, setShowSelBox] = useState(false);
+  
   const handleOption = useCallback(() => {
     if (!showSelBox) {
       setShowSelBox(true);
@@ -65,7 +66,6 @@ export default function SelectBox({ detailData }) {
     setShowSelBox(false);
   }, [showSelBox]);
 
-
   return (
     <>
       {detailData.option.length > 0 && (
@@ -73,8 +73,8 @@ export default function SelectBox({ detailData }) {
           <h3>옵션을 선택하세요</h3>
           {showSelBox && (
             <ul className="list">
-              {detailData.option.map((optionList) => {
-                return <SelectBoxChildren key={optionList.id} optionList={optionList}/>
+              {detailData.option.map((option) => {
+                return <SelectBoxChildren key={option.id} option={option} />;
               })}
             </ul>
           )}

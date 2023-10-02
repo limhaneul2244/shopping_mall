@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { styled } from "styled-components";
 
 const ProductCountInner = styled.div`
@@ -20,26 +20,7 @@ const ProductCountInner = styled.div`
   }
 `;
 
-export default function ProductCountButton({ detailData }) {
-  const [totalNumber, setTotlaNumber] = useState(1);
-  const handleCountUp = useCallback(() => {
-    if (totalNumber === detailData.stockCount) {
-      alert("주문가능한 최대 수량입니다.🤔");
-      setTotlaNumber(detailData.stockCount);
-      return;
-    }
-    setTotlaNumber(totalNumber + 1);
-  }, [totalNumber, detailData]);
-
-  const handleCountDown = useCallback(() => {
-    if (totalNumber <= 1) {
-      alert("최소 주문 수량입니다.👋");
-      setTotlaNumber(1);
-      return;
-    }
-    setTotlaNumber(totalNumber - 1);
-  }, [totalNumber]);
-
+export default function ProductCountButton({ totalNumber, handleCountUp, handleCountDown }) {
   return (
     <ProductCountInner>
       <button className="countBtn" type="minus" onClick={handleCountDown}>

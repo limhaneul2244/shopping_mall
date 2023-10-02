@@ -3,21 +3,23 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import Main from './Main';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ProductDetails from './ProductDetails/ProductDetails';
+import ProductDetails from './ProductDetails';
 import Cart from './Cart&Payment/Cart';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { productOptionsSlice } from './modules/productOptions';
 
-// import rootReducer from './modules';
-// import { createStore } from 'redux';
-// import { Provider } from 'react-redux';
-
-
-// const store = createStore(rootReducer)
-// console.log(store.getState())
+const store = configureStore({
+  reducer: {
+    option : productOptionsSlice.reducer,
+  },
+})
+console.log('store', store.getState())
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // <Provider store={store}>
+  <Provider store={store}>
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<App />} />
@@ -26,5 +28,5 @@ root.render(
         <Route path='/Cart' element={<Cart />} />
       </Routes>
     </BrowserRouter>
-  // </Provider>
+  </Provider>
 );
