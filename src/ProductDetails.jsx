@@ -16,7 +16,8 @@ import PurchaseButton from "./components/PurchaseButton/PurchaseButton";
 import BaseButton from "./components/BaseButton/BaseButton";
 import SelectBox from "./components/SelectBox/SelectBox";
 import ProductCountButton from "./components/ProductCountButton/ProductCountButton";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setOptionName } from "./modules/productOptions";
 
 const ProductInfo = styled.div`
   display: flex;
@@ -160,9 +161,9 @@ export default function ProductDetails() {
   const [detailData, setDetailData] = useState(null);
   const [totalNumber, setTotlaNumber] = useState(1);
   const [finalPrice, setFinalPrice] = useState("");
-  const [close, setClose] = useState(true);
   console.log(id);
 
+  const dispatch = useDispatch();
   const selectOption = useSelector((state) => state.option.optionName);
   console.log("selectOption", selectOption);
 
@@ -213,13 +214,8 @@ export default function ProductDetails() {
   }, [totalNumber]);
 
   const handleClose = useCallback(()=> {
-    if(selectOption !== null) {
-      console.log('selectOption닫기🙌', selectOption)
-      setClose(false);
-      return;
-    }
-    // setClose(true);
-  }, [close, selectOption]);
+    dispatch(setOptionName(null));
+  }, [dispatch]);
 
   //로딩처리
   if (!detailData) {
@@ -250,7 +246,7 @@ export default function ProductDetails() {
                     {detailData.option.length > 0 ? (
                       <>
                         <SelectBox detailDataOption={detailData.option} />
-                        {close && selectOption && (
+                        {selectOption && (
                           <OptionSelectedWrapper>
                             <div>{selectOption}</div>
                             <button onClick={handleClose}>
