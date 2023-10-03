@@ -14,8 +14,6 @@ const store = configureStore({
     option : productOptionsSlice.reducer,
   },
 })
-console.log('store', store.getState())
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

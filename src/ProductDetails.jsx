@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   CommonLayOut,
   GlobalStyle,
@@ -17,7 +17,7 @@ import BaseButton from "./components/BaseButton/BaseButton";
 import SelectBox from "./components/SelectBox/SelectBox";
 import ProductCountButton from "./components/ProductCountButton/ProductCountButton";
 import { useDispatch, useSelector } from "react-redux";
-import { init, setOptionName } from "./modules/productOptions";
+import { init, setOptionName, setStockCount } from "./modules/productOptions";
 
 const ProductInfo = styled.div`
   display: flex;
@@ -172,7 +172,7 @@ export default function ProductDetails() {
   const dispatch = useDispatch();
   const selectOption = useSelector((state) => state.option.optionName);
   const fee = useSelector((state) => state.option.additionalFee);
-  console.log("selectOption", selectOption, fee);
+  // console.log("selectOption", selectOption, fee);
 
   useEffect(() => {
     dispatch(init()); //모든reducer 초기화시켜주기
@@ -182,13 +182,12 @@ export default function ProductDetails() {
   //totalNumber값이 바뀔경우
   useEffect(() => {
     if (detailData) {
-      console.log('detailData', detailData);
+      // console.log('detailData', detailData);
       let price = detailData.price * totalNumber;
-      console.log("price", price);
-
       if(selectOption) { //추가요금이 있는 경우
         price = price + (fee * totalNumber);
       }
+      dispatch(setStockCount(detailData.stockCount));
       setFinalPrice(price.toLocaleString());
     }
 
@@ -201,7 +200,7 @@ export default function ProductDetails() {
         throw new Error("네트워크 문제가 발생했어요.");
       }
       const detailData = await res.json();
-      console.log(detailData);
+      // console.log(detailData);
       setDetailData(detailData);
       return detailData;
     } catch (error) {
@@ -258,7 +257,7 @@ export default function ProductDetails() {
                   <div className="countWrapper">
                     {detailData.option.length > 0 ? (
                       <>
-                        <SelectBox detailDataOption={detailData.option} />
+                        <SelectBox detailDataOption={detailData.option} txt={'옵션을 선택하세요.'} />
                         {selectOption && (
                           <OptionSelectedWrapper>
                             <div>{selectOption}</div>
@@ -303,7 +302,7 @@ export default function ProductDetails() {
             )}
 
             <ProductAction>
-              <PurchaseButton />
+              <PurchaseButton detailDataOption={detailData.option}/>
               <BaseButton icon={shoppingCart} alt={"cart"} />
               <BaseButton icon={heart} alt={"like"} />
             </ProductAction>
