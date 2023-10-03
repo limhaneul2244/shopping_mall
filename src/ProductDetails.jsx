@@ -17,7 +17,7 @@ import BaseButton from "./components/BaseButton/BaseButton";
 import SelectBox from "./components/SelectBox/SelectBox";
 import ProductCountButton from "./components/ProductCountButton/ProductCountButton";
 import { useDispatch, useSelector } from "react-redux";
-import { setOptionName } from "./modules/productOptions";
+import { init, setOptionName } from "./modules/productOptions";
 
 const ProductInfo = styled.div`
   display: flex;
@@ -131,6 +131,7 @@ const ProductInformation = styled.div`
 `;
 
 const OptionSelectedWrapper = styled.div`
+  position: relative;
   width: 100%;
   border-radius: 5px;
   background: #f3f0fb;
@@ -138,6 +139,12 @@ const OptionSelectedWrapper = styled.div`
   padding: 14px;
   box-sizing: border-box;
   margin: 16px 0;
+  .closeBtn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px;
+  }
   .optionValue {
     display: flex;
     justify-content: space-between;
@@ -161,25 +168,31 @@ export default function ProductDetails() {
   const [detailData, setDetailData] = useState(null);
   const [totalNumber, setTotlaNumber] = useState(1);
   const [finalPrice, setFinalPrice] = useState("");
-  console.log(id);
 
   const dispatch = useDispatch();
   const selectOption = useSelector((state) => state.option.optionName);
-  console.log("selectOption", selectOption);
+  const fee = useSelector((state) => state.option.additionalFee);
+  console.log("selectOption", selectOption, fee);
 
   useEffect(() => {
+    dispatch(init()); //모든reducer 초기화시켜주기
     productDetailData();
   }, []);
-
+  
   //totalNumber값이 바뀔경우
   useEffect(() => {
     if (detailData) {
-      console.log(detailData);
+      console.log('detailData', detailData);
       let price = detailData.price * totalNumber;
       console.log("price", price);
+
+      if(selectOption) { //추가요금이 있는 경우
+        price = price + (fee * totalNumber);
+      }
       setFinalPrice(price.toLocaleString());
     }
-  }, [totalNumber, detailData]);
+
+  }, [totalNumber, selectOption, detailData, fee]);
 
   const productDetailData = async () => {
     try {
@@ -249,7 +262,7 @@ export default function ProductDetails() {
                         {selectOption && (
                           <OptionSelectedWrapper>
                             <div>{selectOption}</div>
-                            <button onClick={handleClose}>
+                            <button className="closeBtn" onClick={handleClose}>
                               <img src={closeBtn} alt="닫기" />
                             </button>
                             <div className="optionValue">

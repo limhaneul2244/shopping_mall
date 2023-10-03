@@ -1,14 +1,15 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { setOptionName } from "../../modules/productOptions";
+import { setAdditionalFee, setOptionName } from "../../modules/productOptions";
 
 export default function SelectBoxChildren({ option }) {
   const dispatch = useDispatch();
   //클릭을 통해 옵션이름 변경됨
   const handleOptionBtn = useCallback(() => {
     dispatch(setOptionName(option.optionName));
+    dispatch(setAdditionalFee(option.additionalFee));
     console.log( setOptionName(option.optionName))
-  }, [dispatch, option.optionName]);
+  }, [dispatch, option.optionName, option.additionalFee]);
   return (
     <>
       <li>
