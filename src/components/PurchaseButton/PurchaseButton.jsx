@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { styled } from "styled-components";
 import { MediaQuery } from "../../commonStyle";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Purchase = styled.button`
   display: flex;
@@ -26,6 +26,7 @@ const Purchase = styled.button`
  * @returns 공통버튼
  */
 export default function PurchaseButton({detailDataOption}) {
+  const {id} = useParams();
   const stockCount = useSelector((state) => state.option.stockCount);
   const selectOption = useSelector((state) => state.option.optionName);
   const navigate = useNavigate();
@@ -44,7 +45,8 @@ export default function PurchaseButton({detailDataOption}) {
       return;
     }
     if(detailDataOption.length > 0 && selectOption) {
-      navigate("/Cart");
+      navigate(`/Cart/${id}`);
+      return;
     }
   }, [stockCount, selectOption, detailDataOption]);
   return (
