@@ -6,18 +6,22 @@ import {
   MediaQuery,
   ThumbnailImg,
   elip1,
-} from "./commonStyle";
+} from "../../commonStyle";
 import styled from "styled-components";
-import Loading from "./components/Loading/Loading";
-import shoppingCart from "./imgs/icon-shopping-cart.svg";
-import heart from "./imgs/icon-heart-off.svg";
-import closeBtn from "./imgs/icon-close.svg";
-import PurchaseButton from "./components/PurchaseButton/PurchaseButton";
-import BaseButton from "./components/BaseButton/BaseButton";
-import SelectBox from "./components/SelectBox/SelectBox";
-import ProductCountButton from "./components/ProductCountButton/ProductCountButton";
+import Loading from "../Loading/Loading";
+import shoppingCart from "../../imgs/icon-shopping-cart.svg";
+import heart from "../../imgs/icon-heart-off.svg";
+import closeBtn from "../../imgs/icon-close.svg";
+import PurchaseButton from "../PurchaseButton/PurchaseButton";
+import BaseButton from "../BaseButton/BaseButton";
+import SelectBox from "../SelectBox/SelectBox";
+import ProductCountButton from "../ProductCountButton/ProductCountButton";
 import { useDispatch, useSelector } from "react-redux";
-import { init, setOptionName, setStockCount } from "./modules/productOptions";
+import {
+  init,
+  setOptionName,
+  setStockCount,
+} from "../../modules/productOptions";
 
 const ProductInfo = styled.div`
   display: flex;
@@ -178,19 +182,19 @@ export default function ProductDetails() {
     dispatch(init()); //모든reducer 초기화시켜주기
     productDetailData();
   }, []);
-  
+
   //totalNumber값이 바뀔경우
   useEffect(() => {
     if (detailData) {
       // console.log('detailData', detailData);
       let price = detailData.price * totalNumber;
-      if(selectOption) { //추가요금이 있는 경우
-        price = price + (fee * totalNumber);
+      if (selectOption) {
+        //추가요금이 있는 경우
+        price = price + fee * totalNumber;
       }
       dispatch(setStockCount(detailData.stockCount));
       setFinalPrice(price.toLocaleString());
     }
-
   }, [totalNumber, selectOption, detailData, fee]);
 
   const productDetailData = async () => {
@@ -225,7 +229,7 @@ export default function ProductDetails() {
     setTotlaNumber(totalNumber - 1);
   }, [totalNumber]);
 
-  const handleClose = useCallback(()=> {
+  const handleClose = useCallback(() => {
     dispatch(setOptionName(null));
   }, [dispatch]);
 
@@ -257,7 +261,10 @@ export default function ProductDetails() {
                   <div className="countWrapper">
                     {detailData.option.length > 0 ? (
                       <>
-                        <SelectBox detailDataOption={detailData.option} txt={'옵션을 선택하세요.'} />
+                        <SelectBox
+                          detailDataOption={detailData.option}
+                          txt={"옵션을 선택하세요."}
+                        />
                         {selectOption && (
                           <OptionSelectedWrapper>
                             <div>{selectOption}</div>
@@ -302,7 +309,7 @@ export default function ProductDetails() {
             )}
 
             <ProductAction>
-              <PurchaseButton detailDataOption={detailData.option}/>
+              <PurchaseButton detailDataOption={detailData.option} />
               <BaseButton icon={shoppingCart} alt={"cart"} />
               <BaseButton icon={heart} alt={"like"} />
             </ProductAction>
