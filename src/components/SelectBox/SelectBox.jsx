@@ -56,7 +56,7 @@ const CustomSelect = styled.div`
  * @returns 셀렉트 박스
  */
 export default function SelectBox({ detailDataOption, txt }) {
-  console.log("detailData", detailDataOption);
+  // console.log("detailData", detailDataOption);
   const [showSelBox, setShowSelBox] = useState(false);
 
   const handleOption = useCallback(() => {

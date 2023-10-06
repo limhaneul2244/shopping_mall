@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import { MediaQuery } from "../../commonStyle";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { setData } from "../../common";
 
 const Purchase = styled.button`
   display: flex;
@@ -27,6 +28,7 @@ const Purchase = styled.button`
  */
 export default function PurchaseButton({detailDataOption}) {
   const {id} = useParams();
+  console.log('공통버튼 id', id)
   const stockCount = useSelector((state) => state.option.stockCount);
   const selectOption = useSelector((state) => state.option.optionName);
   const navigate = useNavigate();
@@ -40,15 +42,13 @@ export default function PurchaseButton({detailDataOption}) {
       navigate("/Cart");
       return;
     }
-    if(detailDataOption.length > 0 && !selectOption) { //옵션 있는데 선택 안했을 경우
+    if(!selectOption) { //옵션 있는데 선택 안했을 경우
       alert("옵션을 선택해주세요!!");
       return;
     }
-    if(detailDataOption.length > 0 && selectOption) {
-      navigate(`/Cart/${id}`);
-      return;
-    }
-  }, [stockCount, selectOption, detailDataOption]);
+    setData("Cart", id);
+    navigate(`/Cart/${id}`);
+  }, [stockCount, selectOption, detailDataOption, id]);
   return (
     <Purchase onClick={handleGoToCart}>
       {stockCount === 0 ? "품절상품입니다." : `바로 구매`}

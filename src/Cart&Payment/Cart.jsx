@@ -3,6 +3,7 @@ import { CommonLayOut, GlobalStyle, MediaQuery } from "../commonStyle";
 import { styled } from "styled-components";
 import SelectBox from "../components/SelectBox/SelectBox";
 import { useParams } from "react-router-dom";
+import { getData } from "../common";
 
 const CartContainer = styled.div`
   padding: 160px 0;
@@ -51,32 +52,32 @@ const SubTitle = styled.h2`
   }
 `;
 
-
 export default function Cart() {
-  const { id } = useParams();
-  console.log("Cart", id);
-  const [serviceCoupon, setServiceCoupon] = useState(null);
-  console.log(id);
-  useEffect(() => {
-    couponData();
-  }, [id]);
-  const couponData = async () => {
-    try {
-      const res = await fetch(`http://35.76.53.28:8080/coupon/5`);
-      if (!res.ok) {
-        throw new Error("네트워크 문제가 발생했어요.");
-      }
-      if (res.headers.get("Content-Type").includes("application/json")) {
-        const detailCouponInfo = await res.json();
-        console.log("detailCouponInfo", detailCouponInfo);
-        setServiceCoupon(detailCouponInfo);
-      } else {
-        throw new Error("응답이 JSON 형식이 아닙니다.");
-      }
-    } catch (error) {
-      console.error("데이터를 불러오는 도중 에러가 발생했어요", error);
-    }
-  };
+  // const { id } = useParams();
+  // console.log("Cart", id);
+
+  // const [serviceCoupon, setServiceCoupon] = useState(null);
+  // console.log(id);
+  // useEffect(() => {
+  //   couponData();
+  // }, []);
+  // const couponData = async () => {
+  //   try {
+  //     const res = await fetch(`http://35.76.53.28:8080/coupon/${id}`);
+  //     if (!res.ok) {
+  //       throw new Error("네트워크 문제가 발생했어요.");
+  //     }
+  //     const detailCouponInfo = await res.json();
+  //     if(detailCouponInfo) {
+  //       console.log("detailCouponInfo", detailCouponInfo);
+  //       setServiceCoupon(detailCouponInfo);
+  //     }
+  //   } catch (error) {
+  //     console.error("데이터를 불러오는 도중 에러가 발생했어요", error);
+  //   }
+  // };
+  const getCartId = localStorage.getItem("Cart");
+  console.log('로컬스토리지의 getCartId를 가져왔습니다.', getCartId)
 
   return (
     <>
