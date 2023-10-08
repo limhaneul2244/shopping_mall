@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import { MediaQuery } from "../../commonStyle";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { setData } from "../../common";
+import { getData, setData } from "../../common";
 
 const Purchase = styled.button`
   display: flex;
@@ -38,12 +38,27 @@ export default function PurchaseButton({ detailDataOption }) {
       alert("해당 상품은 구매할 수 없어요");
       return;
     }
-    const cartData = { id, totalNumber, selectOption };
+
+    // 카트(스토리지)에서 들어있는 상품 목록 가져옴
+    const cartDataArray = getData("Cart") || [];
+    // 카트에 들어있는 상품중에 id(이번에 넣으려는 상품)가 같은게 있는지 체크
+    console.log("cartDataArray.id", cartDataArray);
+    for(let i = 0; i < cartDataArray.length; i++) {
+      console.log('체크', cartDataArray[i].id)
+      if(cartDataArray[i].id === id) {
+        alert('장바구니에 이미 담겨있는 상품이에요')
+        return;
+      }
+    }
+
+    cartDataArray.push({ id, totalNumber, selectOption });
+
+    console.log("cartDataArray", cartDataArray);
     if (detailDataOption.length === 0) {
       //옵션 없는 상품
       alert("구매수량이 맞는지 확인해주세요.");
-      setData("Cart", cartData);
-      navigate("/Cart");
+      setData("Cart", cartDataArray);
+      navigate(`/Cart`);
       return;
     }
     if (!selectOption) {
@@ -52,7 +67,7 @@ export default function PurchaseButton({ detailDataOption }) {
       return;
     }
 
-    setData("Cart", cartData);
+    setData("Cart", cartDataArray);
     navigate(`/Cart/${id}`);
   }, [stockCount, selectOption, detailDataOption, id, totalNumber]);
   return (
