@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { styled } from "styled-components";
 
 const ProductCountInner = styled.div`
@@ -20,7 +21,8 @@ const ProductCountInner = styled.div`
   }
 `;
 
-export default function ProductCountButton({ totalNumber, handleCountUp, handleCountDown }) {
+export default function ProductCountButton({ handleCountUp, handleCountDown }) {
+  const totalNumber = useSelector((state) => state.option.totalNumber)
   return (
     <ProductCountInner>
       <button className="countBtn" type="minus" onClick={handleCountDown}>

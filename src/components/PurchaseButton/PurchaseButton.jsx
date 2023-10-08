@@ -26,29 +26,35 @@ const Purchase = styled.button`
  *
  * @returns 공통버튼
  */
-export default function PurchaseButton({detailDataOption}) {
-  const {id} = useParams();
-  console.log('공통버튼 id', id)
+export default function PurchaseButton({ detailDataOption }) {
+  const { id } = useParams();
   const stockCount = useSelector((state) => state.option.stockCount);
   const selectOption = useSelector((state) => state.option.optionName);
+  const totalNumber = useSelector((state) => state.option.totalNumber);
   const navigate = useNavigate();
   const handleGoToCart = useCallback(() => {
-    if (stockCount === 0) { //상품 품절
+    if (stockCount === 0) {
+      //상품 품절
       alert("해당 상품은 구매할 수 없어요");
       return;
     }
-    if (detailDataOption.length === 0) { //옵션 없는 상품
+    const cartData = { id, totalNumber, selectOption };
+    if (detailDataOption.length === 0) {
+      //옵션 없는 상품
       alert("구매수량이 맞는지 확인해주세요.");
+      setData("Cart", cartData);
       navigate("/Cart");
       return;
     }
-    if(!selectOption) { //옵션 있는데 선택 안했을 경우
+    if (!selectOption) {
+      //옵션 있는데 선택 안했을 경우
       alert("옵션을 선택해주세요!!");
       return;
     }
-    setData("Cart", id);
+
+    setData("Cart", cartData);
     navigate(`/Cart/${id}`);
-  }, [stockCount, selectOption, detailDataOption, id]);
+  }, [stockCount, selectOption, detailDataOption, id, totalNumber]);
   return (
     <Purchase onClick={handleGoToCart}>
       {stockCount === 0 ? "품절상품입니다." : `바로 구매`}

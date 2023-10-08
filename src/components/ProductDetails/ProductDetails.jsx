@@ -21,6 +21,7 @@ import {
   init,
   setOptionName,
   setStockCount,
+  setTotalNumber,
 } from "../../modules/productOptions";
 
 const ProductInfo = styled.div`
@@ -170,13 +171,13 @@ const OptionSelectedWrapper = styled.div`
 export default function ProductDetails() {
   const { id } = useParams();
   const [detailData, setDetailData] = useState(null);
-  const [totalNumber, setTotlaNumber] = useState(1);
   const [finalPrice, setFinalPrice] = useState("");
 
   const dispatch = useDispatch();
+  const totalNumber = useSelector((state) => state.option.totalNumber);
   const selectOption = useSelector((state) => state.option.optionName);
   const fee = useSelector((state) => state.option.additionalFee);
-  // console.log("selectOption", selectOption, fee);
+  console.log("selectOption", selectOption, fee, 'setTotalNumber', totalNumber);
 
   useEffect(() => {
     dispatch(init()); //모든reducer 초기화시켜주기
@@ -186,7 +187,6 @@ export default function ProductDetails() {
   //totalNumber값이 바뀔경우
   useEffect(() => {
     if (detailData) {
-      // console.log('detailData', detailData);
       let price = detailData.price * totalNumber;
       if (selectOption) {
         //추가요금이 있는 경우
@@ -204,7 +204,6 @@ export default function ProductDetails() {
         throw new Error("네트워크 문제가 발생했어요.");
       }
       const detailData = await res.json();
-      // console.log(detailData);
       setDetailData(detailData);
       return detailData;
     } catch (error) {
@@ -214,19 +213,19 @@ export default function ProductDetails() {
   const handleCountUp = useCallback(() => {
     if (totalNumber === detailData.stockCount) {
       alert("주문가능한 최대 수량입니다.🤔");
-      setTotlaNumber(detailData.stockCount);
+      dispatch(setTotalNumber(detailData.stockCount));
       return;
     }
-    setTotlaNumber(totalNumber + 1);
+    dispatch(setTotalNumber(totalNumber + 1));
   }, [totalNumber, detailData]);
 
   const handleCountDown = useCallback(() => {
     if (totalNumber <= 1) {
       alert("최소 주문 수량입니다.👋");
-      setTotlaNumber(1);
+      dispatch(setTotalNumber(1));
       return;
     }
-    setTotlaNumber(totalNumber - 1);
+    dispatch(setTotalNumber(totalNumber - 1));
   }, [totalNumber]);
 
   const handleClose = useCallback(() => {
@@ -274,7 +273,6 @@ export default function ProductDetails() {
                             <div className="optionValue">
                               <div>
                                 <ProductCountButton
-                                  totalNumber={totalNumber}
                                   handleCountUp={handleCountUp}
                                   handleCountDown={handleCountDown}
                                 />
@@ -288,7 +286,6 @@ export default function ProductDetails() {
                       </>
                     ) : (
                       <ProductCountButton
-                        totalNumber={totalNumber}
                         handleCountUp={handleCountUp}
                         handleCountDown={handleCountDown}
                       />
@@ -309,7 +306,7 @@ export default function ProductDetails() {
             )}
 
             <ProductAction>
-              <PurchaseButton detailDataOption={detailData.option} />
+              <PurchaseButton detailDataOption={detailData.option}/>
               <BaseButton icon={shoppingCart} alt={"cart"} />
               <BaseButton icon={heart} alt={"like"} />
             </ProductAction>

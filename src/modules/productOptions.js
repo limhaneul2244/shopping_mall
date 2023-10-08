@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
+  totalNumber: 1, //상품 수량 체크
   optionName: '', //상품옵션이름
   additionalFee: 0, //추가요금
   stockCount: 0, //재고수량
@@ -14,6 +15,9 @@ export const productOptionsSlice = createSlice({
     init: () => {
       return initialState;
     },
+    setTotalNumber: (state, action) => {
+      state.totalNumber = action.payload;
+    },
     setOptionName: (state, action) => {
       state.optionName = action.payload;
     },
@@ -26,5 +30,5 @@ export const productOptionsSlice = createSlice({
   },
 })
 
-export const { setOptionName, setAdditionalFee, init, setStockCount } = productOptionsSlice.actions;
+export const { setOptionName, setAdditionalFee, init, setStockCount, setTotalNumber } = productOptionsSlice.actions;
 export default productOptionsSlice.reducer;
