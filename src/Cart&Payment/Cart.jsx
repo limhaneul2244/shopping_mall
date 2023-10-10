@@ -128,10 +128,34 @@ const ProductList = styled.table`
   }
 `;
 
+const DeleteButton = styled.button`
+  padding: 10px 15px;
+  border: 1px solid #bdbdbd;
+  border-radius: 5px;
+  margin-bottom: 16px;
+`;
+const ProductTotalPrice = styled.ul`
+  background-color: #f2f2f2;
+  display: flex;
+  height: 150px;
+  border-radius: 5px;
+
+  li {
+    width: calc(100% / 4);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+`;
 export default function Cart() {
   const [serviceCoupon, setServiceCoupon] = useState("");
-  const totalNumber = useSelector((state) => state.option.totalNumber);
+  // const totalNumber = useSelector((state) => state.option.totalNumber);
   const [cartDataList, setCartDataList] = useState([]);
+  const [productAmount, setProductAmount] = useState(0); //총상품금액
+  const [fee, setFee] = useState(0); //총 배송비 합계
+  const [finalPrice, setFinalPrice] = useState(0); //총 결제 예정 금액
 
   useEffect(() => {
     cartData();
@@ -149,13 +173,36 @@ export default function Cart() {
 
       const cartDataArray = getData("Cart");
       console.log("로컬스토리지의 getCartId를 가져왔습니다.", cartDataArray);
-      // detailProductInfo의 array의 id와 cartDataArray의 id와 동일한 id를 추려낸다.
-      const resultCartData = detailProductInfo.filter((item, index) =>
-        cartDataArray.some((cartItem) => Number(cartItem.id) === item.id)
-      );
-      // 이후 setCartDataList에 담는다.
+
+      // detailProductInfo 중에 cartDataArray.id 와 같은 Product면
+      // {...Product, totalCount: cartDataArray.totalCount} 형식의 개체를 새로 만들어서
+      // resultCartData 에 넣는다
+      let resultCartData = [];
+      let totalPrice = 0;
+      let deliveryFee = 0;
+      let payment = 0;
+      for (let i = 0; i < cartDataArray.length; i++) {
+        for (let j = 0; j < detailProductInfo.length; j++) {
+          console.log(Number(cartDataArray[i].id), detailProductInfo[j].id);
+          if (Number(cartDataArray[i].id) === detailProductInfo[j].id) {
+            const mergedData = {
+              ...detailProductInfo[j],
+              totalNumber: cartDataArray[i].totalNumber,
+            };
+            console.log("일치합니다", mergedData);
+            resultCartData.push(mergedData);
+
+            totalPrice += mergedData.price; //상품의 금액 합계
+            deliveryFee += mergedData.shippingFee; //배송비의 총 합계
+            payment += mergedData.totalNumber * mergedData.price; //결제 예정 금액
+            console.log(payment);
+          }
+        }
+      }
+      setFee(deliveryFee.toLocaleString());
+      setProductAmount(totalPrice.toLocaleString());
       setCartDataList(resultCartData);
-      console.log("resultCartData", resultCartData);
+      setFinalPrice(payment.toLocaleString());
     } catch (error) {
       console.error("데이터를 불러오는 도중 에러가 발생했어요", error);
     }
@@ -171,7 +218,7 @@ export default function Cart() {
           <SubTitle>쿠폰 사용</SubTitle>
           {/* <SelectBox detailDataOption={}  txt={'쿠폰 선택'}/> */}
           <SubTitle>주문 상품</SubTitle>
-          <button type="button">선택 삭제하기</button>
+          <DeleteButton tyle="button">선택 삭제하기</DeleteButton>
           <ProductList>
             <thead>
               <tr>
@@ -187,7 +234,7 @@ export default function Cart() {
             <tbody>
               {cartDataList.map((item) => {
                 return (
-                  <tr>
+                  <tr key={item.id}>
                     <td>
                       <input type="checkbox" name="" id="" />
                     </td>
@@ -207,7 +254,7 @@ export default function Cart() {
                         ) : (
                           ""
                         )}
-                        <div>수량: {totalNumber}</div>
+                        <div>수량💥: {item.totalNumber}</div>
                       </div>
                     </td>
                     <td className="col">
@@ -224,13 +271,28 @@ export default function Cart() {
                       )}
                     </td>
                     <td>{item.shippingFee}원</td>
-                    <td>{item.price * totalNumber}</td>
+                    <td>
+                      {(item.price * item.totalNumber).toLocaleString()}원
+                    </td>
                   </tr>
                 );
               })}
             </tbody>
-            <tfoot></tfoot>
           </ProductList>
+          <ProductTotalPrice>
+            <li>
+              총 상품금액 <span>{productAmount}원</span>
+            </li>
+            <li>
+              쿠폰 할인 <span>80000</span>
+            </li>
+            <li>
+              배송비 <span>{fee}원</span>
+            </li>
+            <li>
+              결제 예정 금액 <span>{finalPrice}원</span>
+            </li>
+          </ProductTotalPrice>
         </CartContainer>
       </CommonLayOut>
     </>
