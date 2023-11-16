@@ -8,8 +8,9 @@ import {
 } from "../commonStyle";
 import { styled } from "styled-components";
 import SelectBox from "../components/SelectBox/SelectBox";
-import { useSelector } from "react-redux";
 import { getData } from "../common";
+import { setOptionName } from "../modules/productOptions";
+import { useDispatch } from "react-redux";
 
 const CartContainer = styled.div`
   padding: 160px 0;
@@ -151,11 +152,11 @@ const ProductTotalPrice = styled.ul`
 `;
 export default function Cart() {
   const [serviceCoupon, setServiceCoupon] = useState("");
-  // const totalNumber = useSelector((state) => state.option.totalNumber);
   const [cartDataList, setCartDataList] = useState([]);
   const [productAmount, setProductAmount] = useState(0); //총상품금액
   const [fee, setFee] = useState(0); //총 배송비 합계
-  const [finalPrice, setFinalPrice] = useState(0); //총 결제 예정 금액
+  const [finalPrice, setFinalPrice] = useState(0); //총 결제 예정 금액(배송비 포함)
+  const dispatch = useDispatch();
 
   useEffect(() => {
     cartData();
@@ -164,12 +165,19 @@ export default function Cart() {
   const cartData = useCallback(async () => {
     try {
       const res = await fetch(`http://35.76.53.28:8080/mall`);
+      const couponRes = await fetch(`http://35.76.53.28:8080/coupon`);
       if (!res.ok) {
         throw new Error("네트워크 문제가 발생했어요.");
       }
       const detailProductInfo = await res.json();
-      console.log("detailCouponInfo", detailProductInfo);
-      // setServiceCoupon(detailProductInfo); //쿠폰리스트
+      let couponListInfo = await couponRes.json();
+
+      couponListInfo = couponListInfo.map((item) => ({
+        ...item,
+        txt: item.couponName,
+      }));
+      console.log("couponListInfo", couponListInfo);
+      setServiceCoupon(couponListInfo); //쿠폰리스트
 
       const cartDataArray = getData("Cart");
       console.log("로컬스토리지의 getCartId를 가져왔습니다.", cartDataArray);
@@ -177,36 +185,43 @@ export default function Cart() {
       // detailProductInfo 중에 cartDataArray.id 와 같은 Product면
       // {...Product, totalCount: cartDataArray.totalCount} 형식의 개체를 새로 만들어서
       // resultCartData 에 넣는다
+
       let resultCartData = [];
-      let totalPrice = 0;
-      let deliveryFee = 0;
-      let payment = 0;
+      let deliveryFee = 0; //배송비
+      let payment = 0; //수량 * 가격
+      let totalPayment; //결제예정금액
       for (let i = 0; i < cartDataArray.length; i++) {
         for (let j = 0; j < detailProductInfo.length; j++) {
-          console.log(Number(cartDataArray[i].id), detailProductInfo[j].id);
           if (Number(cartDataArray[i].id) === detailProductInfo[j].id) {
             const mergedData = {
               ...detailProductInfo[j],
               totalNumber: cartDataArray[i].totalNumber,
             };
-            console.log("일치합니다", mergedData);
             resultCartData.push(mergedData);
 
-            totalPrice += mergedData.price; //상품의 금액 합계
             deliveryFee += mergedData.shippingFee; //배송비의 총 합계
-            payment += mergedData.totalNumber * mergedData.price; //결제 예정 금액
-            console.log(payment);
+            payment += mergedData.totalNumber * mergedData.price; //수량 * 가격
+            totalPayment = payment + deliveryFee; //결제 예정 금액 합계
+            console.log("totalPrice", payment);
           }
         }
       }
       setFee(deliveryFee.toLocaleString());
-      setProductAmount(totalPrice.toLocaleString());
+      setProductAmount(payment.toLocaleString());
       setCartDataList(resultCartData);
-      setFinalPrice(payment.toLocaleString());
+      setFinalPrice(totalPayment.toLocaleString());
     } catch (error) {
       console.error("데이터를 불러오는 도중 에러가 발생했어요", error);
     }
   }, []);
+
+  //select Box
+  const handleSelect = useCallback(
+    (coupon) => {
+      dispatch(setOptionName(coupon));
+    },
+    [dispatch]
+  );
 
   return (
     <>
@@ -216,7 +231,12 @@ export default function Cart() {
           <MainTitle>장바구니/결제</MainTitle>
 
           <SubTitle>쿠폰 사용</SubTitle>
-          {/* <SelectBox detailDataOption={}  txt={'쿠폰 선택'}/> */}
+
+          <SelectBox
+            onSelect={handleSelect}
+            detailDataOption={serviceCoupon}
+            placeholder={"쿠폰 선택"}
+          />
           <SubTitle>주문 상품</SubTitle>
           <DeleteButton tyle="button">선택 삭제하기</DeleteButton>
           <ProductList>
@@ -254,7 +274,7 @@ export default function Cart() {
                         ) : (
                           ""
                         )}
-                        <div>수량💥: {item.totalNumber}</div>
+                        <div>수량: {item.totalNumber}</div>
                       </div>
                     </td>
                     <td className="col">
