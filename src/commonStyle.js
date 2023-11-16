@@ -100,6 +100,7 @@ export const MediaQuery = {
  */
 
 export const CommonLayOut = styled.div`
+  position: relative;
   width: 100%;
   margin: auto auto;
   padding: 0 15px;
