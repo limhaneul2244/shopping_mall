@@ -19,6 +19,7 @@ import ProductCountButton from "../ProductCountButton/ProductCountButton";
 import { useDispatch, useSelector } from "react-redux";
 import {
   init,
+  setAdditionalFee,
   setOptionName,
   setStockCount,
   setTotalNumber,
@@ -177,7 +178,7 @@ export default function ProductDetails() {
   const totalNumber = useSelector((state) => state.option.totalNumber);
   const selectOption = useSelector((state) => state.option.optionName);
   const fee = useSelector((state) => state.option.additionalFee);
-  console.log("selectOption", selectOption, fee, 'setTotalNumber', totalNumber);
+  console.log("selectOption", selectOption, fee, "setTotalNumber", totalNumber);
 
   useEffect(() => {
     dispatch(init()); //모든reducer 초기화시켜주기
@@ -204,12 +205,31 @@ export default function ProductDetails() {
         throw new Error("네트워크 문제가 발생했어요.");
       }
       const detailData = await res.json();
+
+      //select Box
+      detailData.option = detailData.option.map((item) => ({
+        ...item,
+        txt: item.optionName,
+        addTxt: item.additionalFee ? ` (+${item.additionalFee}원)` : null,
+      }));
+      console.log("detailData", detailData);
+
       setDetailData(detailData);
       return detailData;
     } catch (error) {
       console.error("데이터를 불러오는 도중 에러가 발생했어요", error);
     }
   };
+
+  //select Box
+  const handleSelect = useCallback(
+    (selectData) => {
+      dispatch(setOptionName(selectData.optionName));
+      dispatch(setAdditionalFee(selectData.additionalFee));
+    },
+    [dispatch]
+  );
+
   const handleCountUp = useCallback(() => {
     if (totalNumber === detailData.stockCount) {
       alert("주문가능한 최대 수량입니다.🤔");
@@ -261,8 +281,9 @@ export default function ProductDetails() {
                     {detailData.option.length > 0 ? (
                       <>
                         <SelectBox
+                          onSelect={handleSelect}
                           detailDataOption={detailData.option}
-                          txt={"옵션을 선택하세요."}
+                          placeholder={"옵션을 선택하세요."}
                         />
                         {selectOption && (
                           <OptionSelectedWrapper>
@@ -306,7 +327,7 @@ export default function ProductDetails() {
             )}
 
             <ProductAction>
-              <PurchaseButton detailDataOption={detailData.option}/>
+              <PurchaseButton detailDataOption={detailData.option} />
               <BaseButton icon={shoppingCart} alt={"cart"} />
               <BaseButton icon={heart} alt={"like"} />
             </ProductAction>
