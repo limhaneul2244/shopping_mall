@@ -11,6 +11,7 @@ import SelectBox from "../components/SelectBox/SelectBox";
 import { getData } from "../common";
 import { setOptionName } from "../modules/productOptions";
 import { useDispatch } from "react-redux";
+import QuickButton from "../components/QuickButton/QuickButton";
 
 const CartContainer = styled.div`
   padding: 160px 0;
@@ -238,7 +239,7 @@ export default function Cart() {
             placeholder={"쿠폰 선택"}
           />
           <SubTitle>주문 상품</SubTitle>
-          <DeleteButton tyle="button">선택 삭제하기</DeleteButton>
+          <DeleteButton>선택 삭제하기</DeleteButton>
           <ProductList>
             <thead>
               <tr>
@@ -315,6 +316,7 @@ export default function Cart() {
           </ProductTotalPrice>
         </CartContainer>
       </CommonLayOut>
+      <QuickButton/>
     </>
   );
 }
