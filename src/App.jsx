@@ -1,11 +1,8 @@
-import {
-  CommonLayOut,
-  GlobalStyle,
-  MediaQuery,
-} from "./commonStyle";
+import { CommonLayOut, GlobalStyle, MediaQuery } from "./commonStyle";
 import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import ProductItem from "./components/ProductsItem/ProductsItem";
+import QuickButton from "./components/QuickButton/QuickButton";
 
 const GridContainer = styled.div`
   display: grid;
@@ -59,6 +56,7 @@ function App() {
           ))}
         </GridContainer>
       </CommonLayOut>
+      <QuickButton/>
     </>
   );
 }

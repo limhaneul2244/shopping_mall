@@ -54,6 +54,8 @@ export const GlobalStyle = createGlobalStyle`
   button {
     background: none;
     border: none;
+    margin: 0;
+    padding: 0;
     cursor: pointer;
   }
   img {
@@ -84,12 +86,14 @@ export const StyledLink = styled(Link)`
  */
 export const Size = {
   wide: '1260px',
+  wideDetaild1600: '1600px',
   wideDetaild: '1000px',
   tablet: '768px',
   mobile: '375px',
 }
 export const MediaQuery = {
   wide: `@media (max-width: ${Size.wide})`,
+  wideDetaild1600: `@media (max-width: ${Size.wideDetaild1600})`,
   wideDetailed: `@media (max-width: ${Size.wideDetaild})`,
   tablet: `@media (max-width: ${Size.tablet})`,
   mobile: `@media (max-width: ${Size.mobile})`,
